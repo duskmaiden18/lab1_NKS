@@ -69,10 +69,20 @@ print("P(0) = ", P0)
 for i in range(len(P)):
     print("для ", i + 1, "-го інтервалу P(",intervals[i][1],") = ", P[i])
 
-d01 = (1-y)/(1-P[0])
-print("d(0,1) = ", d01)
+def find_P(y):
+    for i in range(len(P)):
+        if y > P[i]:
+            if i == 0:
+                return intervals[0], P[i], 1
+            else:
+                return intervals[i], P[i], P[i-1]
 
-T = 0 + h * d01
+t, pti, pti_1 = find_P(y)
+
+d01 = (pti_1-y)/(pti_1-pti)
+print("d = ", d01)
+
+T = t[0] + h * d01
 print("T",y," = ",T)
 
 def get_intervals(time):
@@ -82,20 +92,21 @@ def get_intervals(time):
             needed_interval = intervals.index(i)
     return needed_interval
 
-def get_P(needed_intervals):
+def get_P(needed_intervals,time):
     Qt = 0
     for i in range(needed_intervals):
         Qt += f[i]*h
-    Qt += f[needed_intervals]*(time1 - intervals[needed_intervals][0])
+    Qt += f[needed_intervals]*(time - intervals[needed_intervals][0])
     P_time = 1 - Qt
     return P_time
 
 needed_intervals1 = get_intervals(time1)
-P_time1 = get_P(needed_intervals1)
+P_time1 = get_P(needed_intervals1,time1)
 print("Ймовірність безвідмовної роботи на час ",time1,"годин = ",P_time1)
 
 needed_intervals2 = get_intervals(time2)
-P_time2 = get_P(needed_intervals2)
+P_time2 = get_P(needed_intervals2,time2)
+print("P(",time2,")=",P_time2)
 l = f[needed_intervals2]/P_time2
 print("Інтенсивність відмов на час ",time2, " годин = ",l)
 
